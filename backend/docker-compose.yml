@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_simplifit_challenge
+    environment:
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: simplifit_challengedb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+volumes:
+  postgres_data:
