@@ -222,7 +222,7 @@ A aplicação utiliza um sistema de autorização granular que adapta a interfac
 
 | Visão do ADMIN (Apenas Leitura) | Visão do SUPERADMIN (Controle Total) |
 | :---: | :---: |
-| ![Tela de Tipos de Usuário para ADMIN](https://github.com/keodanic/simplifit-challenge/blob/main/docs/images/admin.png?raw=true) | ![Tela de Tipos de Usuário para SUPERADMIN]([https://github.com/seu-usuario/seu-repositorio/blob/main/docs/images/superadmin.png?raw=true](https://github.com/keodanic/simplifit-challenge/blob/main/docs/images/admin.png?raw=true)) |
+| ![Tela de Tipos de Usuário para ADMIN](https://github.com/keodanic/simplifit-challenge/blob/main/docs/images/admin.png?raw=true) | ![Tela de Tipos de Usuário para SUPERADMIN]((https://github.com/keodanic/simplifit-challenge/blob/main/docs/images/superadmin.png?raw=true)) |
 
 **Observação:** Note que na visão do **ADMIN**, os botões de "+ Novo Tipo", "Editar" e "Deletar" não são renderizados, pois sua `role` não possui permissão para essas ações, conforme definido no backend com o CASL. O frontend reage a essas permissões para oferecer uma interface segura e intuitiva.
 
