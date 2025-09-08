@@ -1,102 +1,122 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException, 
+  Injectable,
+  NotFoundException, 
+} from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { CreateTipoUsuarioDto } from './dto/typeUsers.dto';
 import { UpdateTipoUsuarioDto } from './dto/typeUsers.dto';
 
 @Injectable()
 export class TypeUsersService {
-    constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
 
-
-    async create(body: CreateTipoUsuarioDto) {
-        const typeCheck = await this.prismaService.tipoUsuario.findUnique({
-            where: {
-                descricao: body.descricao
-            }
-        })
-        if (typeCheck)
-            throw new HttpException(`Tipo de usuário já cadastrado!`, HttpStatus.CONFLICT);
-
-        const typeUser = await this.prismaService.tipoUsuario.create(
-            {
-                data: body,
-                select: {
-                    id: true,
-                    descricao: true,
-                    situacao: true
-
-                }
-            }
-        )
-        if (!typeUser) {
-            throw new HttpException(
-                "Erro ao criar o tipo de usuário", HttpStatus.EXPECTATION_FAILED
-            )
-        }
-        return typeUser
-
+  
+  async create(body: CreateTipoUsuarioDto, operatorId: string) {
+    const typeCheck = await this.prismaService.tipoUsuario.findUnique({
+      where: {
+        descricao: body.descricao,
+      },
+    });
+    if (typeCheck) {
+      
+      throw new ConflictException(`Tipo de usuário já cadastrado!`);
     }
 
-    async findAll() {
-        const typeUser = await this.prismaService.tipoUsuario.findMany({
-            select: {
-                id: true,
-                descricao: true,
-                situacao: true
-            }
-        });
-
-        if (!typeUser)
-            throw new HttpException(`Erro ao encontrar os tipos d usuários!`, HttpStatus.EXPECTATION_FAILED)
-
-        return typeUser;
-    }
-
-    async findOne(id: string) {
-        const typeUser = await this.prismaService.tipoUsuario.findUnique({
-            where: {
-                id
-            }
-        });
-
-        if (!typeUser)
-            throw new HttpException(`Erro ao encontrar tipo de usuário`, HttpStatus.EXPECTATION_FAILED)
-
-        return typeUser;
-    }
+    const newTypeUser = await this.prismaService.tipoUsuario.create({
+      data: body,
+     
+    });
 
     
-     async update(id: string, body: UpdateTipoUsuarioDto) {
-        await this.findOne(id)
-        const typeUser = await this.prismaService.tipoUsuario.update({
-            where: {
-                id,
+    await this.prismaService.auditLog.create({
+        data: {
+            acao: 'CREATE_TYPE_USER',
+            detalhes: {
+                message: `Tipo de usuário '${newTypeUser.descricao}' (ID: ${newTypeUser.id}) foi criado.`
             },
-            data: {
-                ...body
-            }
-        });
+            realizadoPorId: operatorId
+        }
+    });
 
-        if (!typeUser)
-            throw new HttpException(`Erro ao atualizar tipo de usuário`, HttpStatus.EXPECTATION_FAILED);
+    return newTypeUser;
+  }
 
-        return typeUser;
+  async findAll() {
+    
+    return this.prismaService.tipoUsuario.findMany({
+      select: {
+        id: true,
+        descricao: true,
+        situacao: true,
+      },
+    });
+  }
+
+  async findOne(id: string) {
+    const typeUser = await this.prismaService.tipoUsuario.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!typeUser) {
+      
+      throw new NotFoundException(`Tipo de usuário com ID "${id}" não encontrado.`);
     }
 
+    return typeUser;
+  }
 
+  
+  async update(id: string, body: UpdateTipoUsuarioDto, operatorId: string) {
+    
+    const typeUserBeforeUpdate = await this.findOne(id);
 
-    async delete(id: string) {
-        await this.findOne(id)
+    const updatedTypeUser = await this.prismaService.tipoUsuario.update({
+      where: {
+        id,
+      },
+      data: {
+        ...body,
+      },
+    });
 
-        await this.prismaService.tipoUsuario.delete({
-            where: {
-                id,
-            }
-        });
+    
+    await this.prismaService.auditLog.create({
+        data: {
+            acao: 'UPDATE_TYPE_USER',
+            detalhes: {
+                message: `Tipo de usuário '${typeUserBeforeUpdate.descricao}' (ID: ${id}) foi atualizado.`,
+                changes: { ...body }
+            },
+            realizadoPorId: operatorId
+        }
+    });
 
-        return {
-            message: 'Tipo de Usuário deletado com sucesso!',
-            status: HttpStatus.NO_CONTENT,
-        };
-}
+    return updatedTypeUser;
+  }
+
+ 
+  async delete(id: string, operatorId: string): Promise<void> {
+    
+    const typeUserToDelete = await this.findOne(id);
+
+    await this.prismaService.tipoUsuario.delete({
+      where: {
+        id,
+      },
+    });
+
+    
+    await this.prismaService.auditLog.create({
+        data: {
+            acao: 'DELETE_TYPE_USER',
+            detalhes: {
+                message: `Tipo de usuário '${typeUserToDelete.descricao}' (ID: ${id}) foi deletado.`
+            },
+            realizadoPorId: operatorId
+        }
+    });
+  }
 }

@@ -56,8 +56,6 @@ export class CreateUsuarioDto {
     @IsOptional()
     situacao?: boolean;
 
-    @ApiProperty({ example: 'ADMIN', description: 'Papel do usuário' })
-    role: Role;
 }
 
 export class UpdateUsuarioDto {
@@ -93,6 +91,4 @@ export class UpdateUsuarioDto {
     @IsOptional()
     situacao?: boolean;
 
-    @ApiProperty({ example: 'ADMIN', description: 'Papel do usuário' })
-    role: Role;
 }

@@ -58,6 +58,21 @@ model Usuario {
   tipoDeProfissionalId String
   tipoDeProfissional   TipoUsuario @relation(fields: [tipoDeProfissionalId], references: [id])
 
+  logsDeAuditoria AuditLog[]
+
 
   @@map("usuarios")
 }
+
+model AuditLog {
+  id             String   @id @default(uuid())
+  acao           String   
+  detalhes       Json?    
+  timestamp      DateTime @default(now())
+
+  realizadoPorId String
+  realizadoPor   Usuario  @relation(fields: [realizadoPorId], references: [id])
+
+  @@map("audit_logs")
+}
+

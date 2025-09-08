@@ -9,7 +9,8 @@ import {
     ParseUUIDPipe,
     Patch,
     Post,
-    UseGuards
+    UseGuards,
+    Req, 
 } from '@nestjs/common';
 import {
     ApiTags,
@@ -38,8 +39,9 @@ export class UsersController {
     @ApiResponse({ status: 403, description: 'Acesso negado. Permissão insuficiente.' })
     @ApiResponse({ status: 409, description: 'E-mail já cadastrado.' })
     @CheckPolicies((ability: AppAbility) => ability.can(Action.Admin, 'all'))
-    create(@Body() body: CreateUsuarioDto) {
-        return this.usersService.create(body)
+    create(@Body() body: CreateUsuarioDto, @Req() req) { 
+        const operatorId = req.user.id; 
+        return this.usersService.create(body, operatorId); 
     }
 
     @Get()
@@ -48,7 +50,7 @@ export class UsersController {
     @ApiResponse({ status: 403, description: 'Acesso negado. Permissão insuficiente.' })
     @CheckPolicies((ability: AppAbility) => ability.can(Action.Admin, 'all'))
     findAll() {
-        return this.usersService.findAll()
+        return this.usersService.findAll();
     }
 
     @Get(":id")
@@ -58,7 +60,7 @@ export class UsersController {
     @ApiResponse({ status: 404, description: 'Usuário com o ID fornecido não encontrado.' })
     @CheckPolicies((ability: AppAbility) => ability.can(Action.Admin, 'all'))
     findOne(@Param('id', ParseUUIDPipe) id: string) {
-        return this.usersService.findOne(id)
+        return this.usersService.findOne(id);
     }
 
     @Patch(":id")
@@ -68,8 +70,9 @@ export class UsersController {
     @ApiResponse({ status: 403, description: 'Acesso negado. Permissão insuficiente.' })
     @ApiResponse({ status: 404, description: 'Usuário com o ID fornecido não encontrado.' })
     @CheckPolicies((ability: AppAbility) => ability.can(Action.Admin, 'all'))
-    update(@Param('id', ParseUUIDPipe) id: string, @Body() body: UpdateUsuarioDto) {
-        return this.usersService.update(id, body)
+    update(@Param('id', ParseUUIDPipe) id: string, @Body() body: UpdateUsuarioDto, @Req() req) { 
+        const operatorId = req.user.id; 
+        return this.usersService.update(id, body, operatorId); 
     }
 
     @Delete(':id')
@@ -79,8 +82,8 @@ export class UsersController {
     @ApiResponse({ status: 403, description: 'Acesso negado. Permissão insuficiente.' })
     @ApiResponse({ status: 404, description: 'Usuário com o ID fornecido não encontrado.' })
     @CheckPolicies((ability: AppAbility) => ability.can(Action.Admin, 'all'))
-    delete(@Param('id', ParseUUIDPipe) id: string) {
-        return this.usersService.delete(id)
+    delete(@Param('id', ParseUUIDPipe) id: string, @Req() req) { 
+        const operatorId = req.user.id; 
+        return this.usersService.delete(id, operatorId); 
     }
-
 }

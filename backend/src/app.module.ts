@@ -10,9 +10,10 @@ import { TypeUsersModule } from './modules/type-users/type-users.module';
 import { PrismaModule } from './database/prisma.module';
 import { CaslModule } from './casl/casl.module';
 import { AuthModule } from './auth/auth.module';
+import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 
 @Module({
-  imports: [UsersModule, TypeUsersModule,CaslModule,PrismaModule,AuthModule],
+  imports: [UsersModule, TypeUsersModule,CaslModule,PrismaModule,AuthModule, AuditLogsModule],
   controllers: [AppController, UsersController, TypeUsersController],
   providers: [AppService, UsersService, TypeUsersService],
 })
