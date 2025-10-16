@@ -58,6 +58,8 @@ Antes de iniciar, certifique-se de ter o Node.js (v18+), npm e Docker (ou uma in
 
     # Porta em que a aplicação irá rodar
     PORT=4000
+
+    CHECK_POLICIES_KEY="check_policies"
     ```
 4.  **Rode o Docker**:
 
@@ -67,7 +69,7 @@ Antes de iniciar, certifique-se de ter o Node.js (v18+), npm e Docker (ou uma in
     docker compose up -d
     ```
 
-    Se estiver no windows, faça isso com o desktop Docker aberto.
+    Se estiver no windows/MAC, faça isso com o desktop Docker aberto.
  
 
 5.  **Execute as Migrações do Banco de Dados**:
